@@ -1,5 +1,7 @@
 import Head from 'next/head'
 import styles from '../styles/Home.module.css'
+const { DateTime, Duration } = require('luxon');
+
 
 export default function Home({ data, error }) {
   const getDataForPerson = name => {
@@ -12,6 +14,32 @@ export default function Home({ data, error }) {
     }
     return `${name} not found!`
   }
+
+  const getAverageTimeOfCompletionForPerson = (name, part) => {
+    const days = getDataForPerson(name).completion_day_level
+    const durations = []
+    for (const day in days) {
+      const millisOpened = DateTime.fromObject(
+        {
+          year: 2020,
+          month: 12,
+          day: day,
+          hour: 5,
+          zone: 'UTC'
+        }).toMillis()
+      const timestamp = days[day]?.[part].get_star_ts
+      const millisToComplete = (timestamp*1000) - (millisOpened)
+      durations.push(millisToComplete)
+    }
+
+    const avgDuration = Duration.fromMillis(durations.reduce((a,b) => a + b)/ durations.length)
+    const hoursMinutesSeconds =  avgDuration.toFormat("h m s").split(' ')
+    const hours = hoursMinutesSeconds[0]
+    const minutes = hoursMinutesSeconds[1]
+    const seconds = hoursMinutesSeconds[2]
+    return `${hours} hour${hours == 1 ? '' : 's'}, ${minutes} minute${minutes == 1 ? '' : 's'} and ${seconds} second${seconds == 1 ? '' : 's'}.`
+  }
+
   const name = 'Ollie Abbey'
   const errorText = error && `Error: ${error}`
   return (
@@ -23,13 +51,13 @@ export default function Home({ data, error }) {
 
       <main className={styles.main}>
         <h1 className={styles.title}>
-          Identity Advent of Code Leaderboard
+          Average Times:
         </h1>
       </main>
 
       <p className={styles.description}>
           {name}:
-          <code className={styles.code}>{JSON.stringify(getDataForPerson(name))}</code>
+          <code className={styles.code}>{JSON.stringify(getAverageTimeOfCompletionForPerson(name, "1"))}</code>
         </p>
         <p className={styles.description}>
           {errorText}
