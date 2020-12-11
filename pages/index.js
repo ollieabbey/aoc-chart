@@ -104,7 +104,9 @@ export async function getStaticProps() {
       }
     }
   }
-  const response = await fetch("https://adventofcode.com/2020/leaderboard/private/view/496748.json", {
+  const board = 496748 // Work
+  // const board = 580350 // Mistakes Made
+  const response = await fetch(`https://adventofcode.com/2020/leaderboard/private/view/${board}.json`, {
     headers: {
       cookie: `session=${session}`
     },
