@@ -4,20 +4,18 @@ const { DateTime, Duration } = require('luxon');
 
 
 export default function Home({ data, error }) {
-  const getDataForPerson = name => {
-    let key
-    for (key in data.members) {
-      const member = data.members[key]
-      if (member.name === name) {
-        return member
-      }
-    }
-    return `${name} not found!`
+  const formatDuration = duration => {
+    const hoursMinutesSeconds =  duration.toFormat("h m s").split(' ')
+    const hours = hoursMinutesSeconds[0]
+    const minutes = hoursMinutesSeconds[1]
+    const seconds = hoursMinutesSeconds[2]
+    return `${hours} hour${hours == 1 ? '' : 's'}, ${minutes} minute${minutes == 1 ? '' : 's'} and ${seconds} second${seconds == 1 ? '' : 's'}.`
   }
 
-  const getAverageTimeOfCompletionForPerson = (name, part) => {
-    const days = getDataForPerson(name).completion_day_level
-    const durations = []
+  const getAverageTimeOfCompletionForPerson = (personData) => {
+    const days = personData.completion_day_level
+    const durationsPart1 = []
+    const durationsPart2 = []
     for (const day in days) {
       const millisOpened = DateTime.fromObject(
         {
@@ -27,20 +25,49 @@ export default function Home({ data, error }) {
           hour: 5,
           zone: 'UTC'
         }).toMillis()
-      const timestamp = days[day]?.[part].get_star_ts
-      const millisToComplete = (timestamp*1000) - (millisOpened)
-      durations.push(millisToComplete)
+      const timestamp1 = days[day]?.["1"]?.get_star_ts || 0
+      const timestamp2 = days[day]?.["2"]?.get_star_ts || 0
+      const millisToCompletePart1 = (timestamp1*1000) - (millisOpened)
+      const millisToCompletePart2 = (timestamp2*1000) - (timestamp1*1000)
+      if (millisToCompletePart1 > 0) {
+        durationsPart1.push(millisToCompletePart1)
+      }
+      if (millisToCompletePart2 > 0) {
+        durationsPart2.push(millisToCompletePart2)
+      }
     }
-
-    const avgDuration = Duration.fromMillis(durations.reduce((a,b) => a + b)/ durations.length)
-    const hoursMinutesSeconds =  avgDuration.toFormat("h m s").split(' ')
-    const hours = hoursMinutesSeconds[0]
-    const minutes = hoursMinutesSeconds[1]
-    const seconds = hoursMinutesSeconds[2]
-    return `${hours} hour${hours == 1 ? '' : 's'}, ${minutes} minute${minutes == 1 ? '' : 's'} and ${seconds} second${seconds == 1 ? '' : 's'}.`
+    if (!durationsPart1 || durationsPart1.length === 0) {
+      return
+    }
+    if (!durationsPart2 || durationsPart2.length === 0) {
+      return
+    }
+    const avgDuration1 = durationsPart1.length > 0 ? Duration.fromMillis(durationsPart1.reduce((a,b) => a + b)/ durationsPart1.length) : undefined
+    const avgDuration2 = durationsPart2.length > 0 ? Duration.fromMillis(durationsPart2.reduce((a,b) => a + b)/ durationsPart1.length) : undefined
+    return {
+      name: personData.name,
+      'Part 1': formatDuration(avgDuration1),
+      'Part 2': formatDuration(avgDuration2),
+      total: avgDuration1 + avgDuration2
+    }
   }
 
-  const name = 'Ollie Abbey'
+  const getDataToPrint = () => {
+    const times = []
+    for (const key in data.members) {
+      const member = data.members[key]
+      const timeData = getAverageTimeOfCompletionForPerson(member)
+      if (timeData) {
+        times.push(timeData)
+      }
+    }
+    return times
+  }
+
+  const dataToPrint = getDataToPrint()
+  const sortedData = dataToPrint.sort((a,b) => a.total - b.total)
+
+  const text = JSON.stringify(sortedData)
   const errorText = error && `Error: ${error}`
   return (
     <div className={styles.container}>
@@ -56,8 +83,7 @@ export default function Home({ data, error }) {
       </main>
 
       <p className={styles.description}>
-          {name}:
-          <code className={styles.code}>{JSON.stringify(getAverageTimeOfCompletionForPerson(name, "1"))}</code>
+          <code className={styles.code}>{text}</code>
         </p>
         <p className={styles.description}>
           {errorText}
