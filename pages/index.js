@@ -2,7 +2,8 @@ import Head from 'next/head'
 import styles from '../styles/Home.module.css'
 import { getLeaderboardData } from '../util/getLeaderboardData'
 // import { getAverageTimesForMembers } from '../util/getAverageTimesForMembers'
-import { getCompletionTimes } from '../util/getCompletionTimes'
+// import { getCompletionTimes } from '../util/getCompletionTimes'
+import Chart from '../components/chart'
 import PropTypes from 'prop-types'
 
 
@@ -16,14 +17,14 @@ export default function Home({ data }) {
 
 			<main className={styles.main}>
 				<h1 className={styles.title}>
-          Average Times:
+					Advent of Code Leaderboard Chart
 				</h1>
-			</main>
 
-			<p className={styles.description}>
-				<code className={styles.code}>{JSON.stringify(getCompletionTimes(data))}</code>
-			</p>
-       
+				{/* <p className={styles.description}>
+					<code className={styles.code}>{JSON.stringify(getCompletionTimes(data))}</code>
+				</p> */}
+				<Chart data={data}/>
+			</main>
 		</div>
 	)
 }
