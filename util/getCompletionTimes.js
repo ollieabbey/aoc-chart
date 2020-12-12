@@ -95,7 +95,7 @@ export const getPointsAtTimes = data => {
 			}
 		}
 		if (pointsEarnedByMember.length > 0) {
-			pointsEarned[member.name] = pointsEarnedByMember.sort((a,b) => a[0] > b[0]).map((value, index, array) => {
+			pointsEarned[member.name] = pointsEarnedByMember.sort((a,b) => a[0] - b[0]).map((value, index, array) => {
 				const scoreAtIndex = array.slice(0, index + 1).map(it => it[1]).reduce((a,b) => a+b)
 				return [value[0], scoreAtIndex]
 			})

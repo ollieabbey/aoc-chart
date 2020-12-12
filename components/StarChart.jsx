@@ -1,37 +1,25 @@
 import PropTypes from 'prop-types'
 import { Scatter } from 'react-chartjs-2'
-import { getCompletionTimesAsArray } from '../util/getCompletionTimes'
-import { DateTime } from 'luxon'
 import 'chartjs-adapter-luxon'
-import { options, dataSetOptions } from '../config/chartConfig'
+import { options } from '../config/chartConfig'
+import { cloneDeep, set } from 'lodash'
 
-
-export default function StarChart({ data }) {
-	const allCompletionTimes = getCompletionTimesAsArray(data)
-	const datasets = []
-	for (const person in allCompletionTimes) {
-		const completionTimes = allCompletionTimes[person].map(timestamp => DateTime.fromSeconds(parseInt(timestamp)))
-			.map((dateTime, index) => {
-				return {
-					t: dateTime,
-					y: (index + 1)
-				}
-			})
-		const dataset = {
-			label: person,
-			data: completionTimes,
-			...(dataSetOptions())
-		}
-		datasets.push(dataset)
-	}
+export default function StarChart({ datasets }) {
 	const plotData = {
 		datasets: datasets
 	}
+	const plotOptions = cloneDeep(options)
+	set(plotOptions, 'scales.yAxes', [{
+		scaleLabel: {
+			display: true,
+			labelString: 'Stars'
+		}
+	}])
 	return (
-		<Scatter data={plotData} options={options}/>
+		<Scatter data={plotData} options={plotOptions}/>
 	)
 }
 
 StarChart.propTypes = {
-	data: PropTypes.object.isRequired,
+	datasets: PropTypes.array.isRequired,
 }

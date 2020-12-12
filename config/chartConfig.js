@@ -1,8 +1,10 @@
-import { randomColour } from '../util/randomColour'
-
 export const options = {
 	scales: {
 		xAxes: [{
+			scaleLabel: {
+				display: true,
+				labelString: 'Date'
+			},
 			type: 'time',
 			time: {
 				unit: 'day',
@@ -14,19 +16,22 @@ export const options = {
 		}]
 	},
 	animation: {
-		duration: 10000,
-		easing: 'linear'
+		duration: 0,
+		// easing: 'linear'
+	},
+	layout: {
+		padding: {
+			top: 100
+		}
 	}
 }
 
 export const dataSetOptions = () => {
-	const colour = randomColour()
 	return {
 		showLine: true,
 		lineTension: 0,
 		fill: false,
-		backgroundColor: colour,
-		borderColor: colour
+		
 	}
 }
 

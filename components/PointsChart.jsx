@@ -1,37 +1,26 @@
 import PropTypes from 'prop-types'
 import { Scatter } from 'react-chartjs-2'
-import { getPointsAtTimes } from '../util/getCompletionTimes'
-import { DateTime } from 'luxon'
 import 'chartjs-adapter-luxon'
-import { options, dataSetOptions } from '../config/chartConfig'
+import { options } from '../config/chartConfig'
+import { cloneDeep, set } from 'lodash'
 
 
-export default function PointsChart({ data }) {
-	const points = getPointsAtTimes(data)
-	const datasets = []
-	for (const person in points) {
-		const pointTimes = points[person].map(array => [DateTime.fromSeconds(parseInt(array[0])), array[1]])
-			.map(array => {
-				return {
-					t: array[0],
-					y: array[1]
-				}
-			})
-		const dataset = {
-			label: person,
-			data: pointTimes,
-			...(dataSetOptions())
-		}
-		datasets.push(dataset)
-	}
+export default function PointsChart({ datasets }) {
 	const plotData = {
 		datasets: datasets
 	}
+	const plotOptions = cloneDeep(options)
+	set(plotOptions, 'scales.yAxes', [{
+		scaleLabel: {
+			display: true,
+			labelString: 'Points'
+		}
+	}])
 	return (
-		<Scatter data={plotData} options={options}/>
+		<Scatter data={plotData} options={plotOptions}/>
 	)
 }
 
 PointsChart.propTypes = {
-	data: PropTypes.object.isRequired,
+	datasets: PropTypes.array.isRequired,
 }

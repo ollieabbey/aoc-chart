@@ -4,10 +4,65 @@ import { getLeaderboardData } from '../util/getLeaderboardData'
 import StarChart from '../components/StarChart'
 import PointsChart from '../components/PointsChart'
 import PropTypes from 'prop-types'
-import { getPointsAtTimes } from '../util/getCompletionTimes'
+import { getCompletionTimesAsArray, getPointsAtTimes } from '../util/getCompletionTimes'
+import { DateTime } from 'luxon'
+import { dataSetOptions } from '../config/chartConfig'
+import { randomColour } from '../util/randomColour'
+
+const getStarChartDatasets = (data, colours) => {
+	const allCompletionTimes = getCompletionTimesAsArray(data)
+	const datasets = []
+	for (const person in allCompletionTimes) {
+		const completionTimes = allCompletionTimes[person].map(timestamp => DateTime.fromSeconds(parseInt(timestamp)))
+			.map((dateTime, index) => {
+				return {
+					t: dateTime,
+					y: (index + 1)
+				}
+			})
+		const colour = colours[person]
+		const dataset = {
+			label: person,
+			data: completionTimes,
+			backgroundColor: colour,
+			borderColor: colour,
+			...(dataSetOptions())
+		}
+		datasets.push(dataset)
+	}
+	return datasets.sort((a,b) => a.person > b.person)
+}
+
+const getPointChartDataSets = (data, colours) => {
+	const points = getPointsAtTimes(data)
+	const datasets = []
+	for (const person in points) {
+		const pointTimes = points[person].map(array => [DateTime.fromSeconds(parseInt(array[0])), array[1]])
+			.map(array => {
+				return {
+					t: array[0],
+					y: array[1]
+				}
+			})
+		const colour = colours[person]
+		const dataset = {
+			label: person,
+			data: pointTimes,
+			backgroundColor: colour,
+			borderColor: colour,
+			...(dataSetOptions())
+		}
+		datasets.push(dataset)
+	}
+	return datasets.sort((a,b) => a.person > b.person)
+}
 
 export default function Home({ data }) {
-	getPointsAtTimes(data)
+	const colours = {}
+	for (const key in data.members) {
+		const person = data.members[key]
+		colours[person.name] = randomColour()
+	}
 	return (
 		<div className={styles.container}>
 			<Head>
@@ -17,11 +72,12 @@ export default function Home({ data }) {
 
 			<main className={styles.main}>
 				<h1 className={styles.title}>
-					Advent of Code Leaderboard Chart
+					Advent of Code Leaderboard Charts
 				</h1>
-				<PointsChart data={data}/>
-				<StarChart data={data}/>
+				<PointsChart datasets={getPointChartDataSets(data, colours)} />
+				<StarChart datasets={getStarChartDatasets(data, colours)} />
 			</main>
+
 		</div>
 	)
 }
