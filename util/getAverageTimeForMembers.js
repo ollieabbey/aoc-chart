@@ -1,6 +1,5 @@
 const { DateTime, Duration } = require('luxon')
 
-
 const formatDuration = duration => {
 	const hoursMinutesSeconds =  duration.toFormat('h m s').split(' ')
 	const hours = hoursMinutesSeconds[0]
@@ -49,7 +48,7 @@ const getAverageTimeOfCompletionForPerson = (personData) => {
 	}
 }
 
-export const getAverageTimeData = data => {
+export const getAverageTimesForMembers = data => {
 	const times = []
 	for (const key in data.members) {
 		const member = data.members[key]

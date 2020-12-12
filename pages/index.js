@@ -1,7 +1,8 @@
 import Head from 'next/head'
 import styles from '../styles/Home.module.css'
 import { getLeaderboardData } from '../util/getLeaderboardData'
-import { getAverageTimeData } from '../util/getAverageTimeData'
+// import { getAverageTimesForMembers } from '../util/getAverageTimesForMembers'
+import { getCompletionTimes } from '../util/getCompletionTimes'
 import PropTypes from 'prop-types'
 
 
@@ -20,7 +21,7 @@ export default function Home({ data }) {
 			</main>
 
 			<p className={styles.description}>
-				<code className={styles.code}>{JSON.stringify(getAverageTimeData(data))}</code>
+				<code className={styles.code}>{JSON.stringify(getCompletionTimes(data))}</code>
 			</p>
        
 		</div>
