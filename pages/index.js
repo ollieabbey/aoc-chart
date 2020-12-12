@@ -3,7 +3,7 @@ import styles from '../styles/Home.module.css'
 import { getLeaderboardData } from '../util/getLeaderboardData'
 // import { getAverageTimesForMembers } from '../util/getAverageTimesForMembers'
 // import { getCompletionTimes } from '../util/getCompletionTimes'
-import Chart from '../components/chart'
+import StarChart from '../components/StarChart'
 import PropTypes from 'prop-types'
 
 
@@ -23,7 +23,7 @@ export default function Home({ data }) {
 				{/* <p className={styles.description}>
 					<code className={styles.code}>{JSON.stringify(getCompletionTimes(data))}</code>
 				</p> */}
-				<Chart data={data}/>
+				<StarChart data={data}/>
 			</main>
 		</div>
 	)
