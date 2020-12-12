@@ -101,7 +101,6 @@ export const getPointsAtTimes = data => {
 			})
 		}
 	}
-	console.log(JSON.stringify(pointsEarned))
-	return {}
+	return pointsEarned
 }
 

@@ -14,7 +14,7 @@ export const options = {
 		}]
 	},
 	animation: {
-		duration: 1000,
+		duration: 10000,
 		easing: 'linear'
 	}
 }

@@ -2,6 +2,7 @@ import Head from 'next/head'
 import styles from '../styles/Home.module.css'
 import { getLeaderboardData } from '../util/getLeaderboardData'
 import StarChart from '../components/StarChart'
+import PointsChart from '../components/PointsChart'
 import PropTypes from 'prop-types'
 import { getPointsAtTimes } from '../util/getCompletionTimes'
 
@@ -18,6 +19,7 @@ export default function Home({ data }) {
 				<h1 className={styles.title}>
 					Advent of Code Leaderboard Chart
 				</h1>
+				<PointsChart data={data}/>
 				<StarChart data={data}/>
 			</main>
 		</div>
