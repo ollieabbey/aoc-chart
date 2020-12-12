@@ -1,120 +1,36 @@
 import Head from 'next/head'
 import styles from '../styles/Home.module.css'
-const { DateTime, Duration } = require('luxon');
+import { getLeaderboardData } from '../util/getLeaderboardData'
+import { getAverageTimeData } from '../util/getAverageTimeData'
+import PropTypes from 'prop-types'
 
 
-export default function Home({ data, error }) {
-  const formatDuration = duration => {
-    const hoursMinutesSeconds =  duration.toFormat("h m s").split(' ')
-    const hours = hoursMinutesSeconds[0]
-    const minutes = hoursMinutesSeconds[1]
-    const seconds = hoursMinutesSeconds[2]
-    return `${hours} hour${hours == 1 ? '' : 's'}, ${minutes} minute${minutes == 1 ? '' : 's'} and ${seconds} second${seconds == 1 ? '' : 's'}.`
-  }
+export default function Home({ data }) {
+	return (
+		<div className={styles.container}>
+			<Head>
+				<title>AoC Leaderboard Page</title>
+				<link rel="icon" href="/favicon.ico" />
+			</Head>
 
-  const getAverageTimeOfCompletionForPerson = (personData) => {
-    const days = personData.completion_day_level
-    const durationsPart1 = []
-    const durationsPart2 = []
-    for (const day in days) {
-      const millisOpened = DateTime.fromObject(
-        {
-          year: 2020,
-          month: 12,
-          day: day,
-          hour: 5,
-          zone: 'UTC'
-        }).toMillis()
-      const timestamp1 = days[day]?.["1"]?.get_star_ts || 0
-      const timestamp2 = days[day]?.["2"]?.get_star_ts || 0
-      const millisToCompletePart1 = (timestamp1*1000) - (millisOpened)
-      const millisToCompletePart2 = (timestamp2*1000) - (timestamp1*1000)
-      if (millisToCompletePart1 > 0) {
-        durationsPart1.push(millisToCompletePart1)
-      }
-      if (millisToCompletePart2 > 0) {
-        durationsPart2.push(millisToCompletePart2)
-      }
-    }
-    if (!durationsPart1 || durationsPart1.length === 0) {
-      return
-    }
-    if (!durationsPart2 || durationsPart2.length === 0) {
-      return
-    }
-    const avgDuration1 = durationsPart1.length > 0 ? Duration.fromMillis(durationsPart1.reduce((a,b) => a + b)/ durationsPart1.length) : undefined
-    const avgDuration2 = durationsPart2.length > 0 ? Duration.fromMillis(durationsPart2.reduce((a,b) => a + b)/ durationsPart1.length) : undefined
-    return {
-      name: personData.name,
-      'Part 1': formatDuration(avgDuration1),
-      'Part 2': formatDuration(avgDuration2),
-      total: avgDuration1 + avgDuration2
-    }
-  }
-
-  const getDataToPrint = () => {
-    const times = []
-    for (const key in data.members) {
-      const member = data.members[key]
-      const timeData = getAverageTimeOfCompletionForPerson(member)
-      if (timeData) {
-        times.push(timeData)
-      }
-    }
-    return times
-  }
-
-  const dataToPrint = getDataToPrint()
-  const sortedData = dataToPrint.sort((a,b) => a.total - b.total)
-
-  const text = JSON.stringify(sortedData)
-  const errorText = error && `Error: ${error}`
-  return (
-    <div className={styles.container}>
-      <Head>
-        <title>Create Next App</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-
-      <main className={styles.main}>
-        <h1 className={styles.title}>
+			<main className={styles.main}>
+				<h1 className={styles.title}>
           Average Times:
-        </h1>
-      </main>
+				</h1>
+			</main>
 
-      <p className={styles.description}>
-          <code className={styles.code}>{text}</code>
-        </p>
-        <p className={styles.description}>
-          {errorText}
-        </p>
-    </div>
-  )
+			<p className={styles.description}>
+				<code className={styles.code}>{JSON.stringify(getAverageTimeData(data))}</code>
+			</p>
+       
+		</div>
+	)
 }
 
 export async function getStaticProps() {
-  const session = process.env.AOC_SESSION
-  if (!session) {
-    return {
-      props: {
-        error: 'No Advent of Code session provided.',
-        data: {
-          members: {}
-        }
-      }
-    }
-  }
-  const board = 496748 // Work
-  // const board = 580350 // Mistakes Made
-  const response = await fetch(`https://adventofcode.com/2020/leaderboard/private/view/${board}.json`, {
-    headers: {
-      cookie: `session=${session}`
-    },
-  });
-  const data = await response.json()
-  return {
-    props: {
-      data,
-    }
-  }
+	return getLeaderboardData()
+}
+
+Home.propTypes = {
+	data: PropTypes.object,
 }
