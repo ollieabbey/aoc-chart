@@ -1,13 +1,12 @@
 import Head from 'next/head'
 import styles from '../styles/Home.module.css'
 import { getLeaderboardData } from '../util/getLeaderboardData'
-// import { getAverageTimesForMembers } from '../util/getAverageTimesForMembers'
-// import { getCompletionTimes } from '../util/getCompletionTimes'
 import StarChart from '../components/StarChart'
 import PropTypes from 'prop-types'
-
+import { getPointsAtTimes } from '../util/getCompletionTimes'
 
 export default function Home({ data }) {
+	getPointsAtTimes(data)
 	return (
 		<div className={styles.container}>
 			<Head>
@@ -19,10 +18,6 @@ export default function Home({ data }) {
 				<h1 className={styles.title}>
 					Advent of Code Leaderboard Chart
 				</h1>
-
-				{/* <p className={styles.description}>
-					<code className={styles.code}>{JSON.stringify(getCompletionTimes(data))}</code>
-				</p> */}
 				<StarChart data={data}/>
 			</main>
 		</div>
