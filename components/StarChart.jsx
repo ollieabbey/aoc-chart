@@ -56,5 +56,5 @@ export default function StarChart({ data }) {
 }
 
 StarChart.propTypes = {
-	data: (PropTypes.object | PropTypes.func).isRequired
+	data: PropTypes.object.isRequired,
 }
