@@ -1,13 +1,5 @@
 const { DateTime, Duration } = require('luxon')
 
-const formatDuration = duration => {
-	const hoursMinutesSeconds =  duration.toFormat('h m s').split(' ')
-	const hours = hoursMinutesSeconds[0]
-	const minutes = hoursMinutesSeconds[1]
-	const seconds = hoursMinutesSeconds[2]
-	return `${hours}h, ${minutes}m, ${seconds}s`
-}
-
 const getDataForPerson = (personData) => {
 	const days = personData.completion_day_level
 	const durationsPart1 = {}
@@ -42,20 +34,15 @@ const getDataForPerson = (personData) => {
 	const durationsPart2Array = Object.keys(durationsPart2).map(key => durationsPart2[key])
 	const avgDuration1 = durationsPart1Array.length > 0 ? Duration.fromMillis(durationsPart1Array.reduce((a,b) => a + b)/ durationsPart1Array.length) : undefined
 	const avgDuration2 = durationsPart2Array.length > 0 ? Duration.fromMillis(durationsPart2Array.reduce((a,b) => a + b)/ durationsPart2Array.length) : undefined
-	const fastestPart1Millis = durationsPart1Array.reduce((a, b) => Math.min(a,b))
-	const fastestPart2Millis = durationsPart2Array.reduce((a, b) => Math.min(a,b))
+	const fastestPart1Millis = Duration.fromMillis(durationsPart1Array.reduce((a, b) => Math.min(a,b)))
+	const fastestPart2Millis = Duration.fromMillis(durationsPart2Array.reduce((a, b) => Math.min(a,b)))
 	return {
 		name: personData.name,
 		score: personData.local_score,
 		stars: personData.stars,
-		'Part 1': formatDuration(avgDuration1),
-		'Part 2': formatDuration(avgDuration2),
-		total: formatDuration(avgDuration1.plus(avgDuration2)),
-		'Fastest Part 1': `${formatDuration(Duration.fromMillis(fastestPart1Millis))} (Day ${Object.keys(durationsPart1).filter(day => durationsPart1[day] === fastestPart1Millis)[0]})`,
-		'Fastest Part 2': `${formatDuration(Duration.fromMillis(fastestPart2Millis))} (Day ${Object.keys(durationsPart2).filter(day => durationsPart2[day] === fastestPart2Millis)[0]})`,
 		part1Millis: avgDuration1,
 		part2Millis: avgDuration2,
-		totalMillis: avgDuration1 + avgDuration2,
+		totalMillis: avgDuration1.plus(avgDuration2),
 		fastestPart1Millis: fastestPart1Millis,
 		fastestPart2Millis: fastestPart2Millis,
 	}
