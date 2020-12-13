@@ -16,8 +16,8 @@ export const options = {
 		}]
 	},
 	animation: {
-		duration: 0,
-		// easing: 'linear'
+		duration: 2000,
+		easing: 'linear'
 	},
 	layout: {
 		padding: {
