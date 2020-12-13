@@ -1,8 +1,6 @@
 import PropTypes from 'prop-types'
 import styles from '../styles/Home.module.css'
 import { useState } from 'react'
-const { DateTime, Duration } = require('luxon')
-
 
 const formatDuration = duration => {
 	const hoursMinutesSeconds =  duration.toFormat('h m s').split(' ')
