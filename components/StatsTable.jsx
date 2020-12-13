@@ -65,8 +65,8 @@ const DataRow = (data) => {
 			<td>{formatDuration(data.part1Millis)}</td>
 			<td>{formatDuration(data.part2Millis)}</td>
 			<td>{formatDuration(data.totalMillis)}</td>
-			<td>{formatDuration(data.fastestPart1Millis)}</td>
-			<td>{formatDuration(data.fastestPart2Millis)}</td>
+			<td>{`${formatDuration(data.fastestPart1Millis)} (Day ${data.fastestPart1Day})`}</td>
+			<td>{`${formatDuration(data.fastestPart2Millis)} (Day ${data.fastestPart2Day})`}</td>
 		</tr>
 	)
 }

@@ -34,8 +34,8 @@ const getDataForPerson = (personData) => {
 	const durationsPart2Array = Object.keys(durationsPart2).map(key => durationsPart2[key])
 	const avgDuration1 = durationsPart1Array.length > 0 ? Duration.fromMillis(durationsPart1Array.reduce((a,b) => a + b)/ durationsPart1Array.length) : undefined
 	const avgDuration2 = durationsPart2Array.length > 0 ? Duration.fromMillis(durationsPart2Array.reduce((a,b) => a + b)/ durationsPart2Array.length) : undefined
-	const fastestPart1Millis = Duration.fromMillis(durationsPart1Array.reduce((a, b) => Math.min(a,b)))
-	const fastestPart2Millis = Duration.fromMillis(durationsPart2Array.reduce((a, b) => Math.min(a,b)))
+	const fastestPart1Millis = durationsPart1Array.reduce((a, b) => Math.min(a,b))
+	const fastestPart2Millis = durationsPart2Array.reduce((a, b) => Math.min(a,b))
 	return {
 		name: personData.name,
 		score: personData.local_score,
@@ -43,8 +43,10 @@ const getDataForPerson = (personData) => {
 		part1Millis: avgDuration1,
 		part2Millis: avgDuration2,
 		totalMillis: avgDuration1.plus(avgDuration2),
-		fastestPart1Millis: fastestPart1Millis,
-		fastestPart2Millis: fastestPart2Millis,
+		fastestPart1Millis: Duration.fromMillis(fastestPart1Millis),
+		fastestPart2Millis: Duration.fromMillis(fastestPart2Millis),
+		fastestPart1Day: Object.keys(durationsPart1).filter(day => durationsPart1[day] === fastestPart1Millis)[0],
+		fastestPart2Day: Object.keys(durationsPart2).filter(day => durationsPart2[day] === fastestPart2Millis)[0],
 	}
 }
 
