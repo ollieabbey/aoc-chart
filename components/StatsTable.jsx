@@ -6,8 +6,17 @@ const HeaderRow = ({ requestSort }) => {
 	return (
 		<thead>
 			<tr>
+				<th onClick={() => requestSort('position')}>
+                Position
+				</th>
 				<th onClick={() => requestSort('name')}>
                 Name
+				</th>
+				<th onClick={() => requestSort('score')}>
+                Score
+				</th>
+				<th onClick={() => requestSort('stars')}>
+                Stars
 				</th>
 				<th onClick={() => requestSort('part1Millis')}>
                 Part 1
@@ -26,7 +35,10 @@ const HeaderRow = ({ requestSort }) => {
 const DataRow = (data) => {
 	return (
 		<tr key={data.name}>
+			<td>{data.position}</td>
 			<td>{data.name}</td>
+			<td>{data.score}</td>
+			<td>{data.stars}</td>
 			<td>{data['Part 1']}</td>
 			<td>{data['Part 2']}</td>
 			<td>{data.total}</td>
@@ -35,8 +47,8 @@ const DataRow = (data) => {
 }
 
 
-export default function AveragesTable({ datasets }) {
-	const [sortConfig, setSortConfig] = useState({key: 'Total', direction: 'ascending'})
+export default function StatsTable({ datasets }) {
+	const [sortConfig, setSortConfig] = useState({key: 'position', direction: 'ascending'})
 	const sortedData = datasets.sort((a, b) => {
 		const aValue = a[sortConfig.key]
 		const bValue = b[sortConfig.key]
@@ -65,7 +77,7 @@ export default function AveragesTable({ datasets }) {
 	)
 }
 
-AveragesTable.propTypes = {
+StatsTable.propTypes = {
 	datasets: PropTypes.array.isRequired,
 }
 

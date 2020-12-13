@@ -5,10 +5,10 @@ const formatDuration = duration => {
 	const hours = hoursMinutesSeconds[0]
 	const minutes = hoursMinutesSeconds[1]
 	const seconds = hoursMinutesSeconds[2]
-	return `${hours} hour${hours == 1 ? '' : 's'}, ${minutes} minute${minutes == 1 ? '' : 's'} and ${seconds} second${seconds == 1 ? '' : 's'}.`
+	return `${hours}h, ${minutes}m, ${seconds}s`
 }
 
-const getAverageTimeOfCompletionForPerson = (personData) => {
+const getDataForPerson = (personData) => {
 	const days = personData.completion_day_level
 	const durationsPart1 = []
 	const durationsPart2 = []
@@ -42,6 +42,8 @@ const getAverageTimeOfCompletionForPerson = (personData) => {
 	const avgDuration2 = durationsPart2.length > 0 ? Duration.fromMillis(durationsPart2.reduce((a,b) => a + b)/ durationsPart1.length) : undefined
 	return {
 		name: personData.name,
+		score: personData.local_score,
+		stars: personData.stars,
 		'Part 1': formatDuration(avgDuration1),
 		'Part 2': formatDuration(avgDuration2),
 		total: formatDuration(avgDuration1.plus(avgDuration2)),
@@ -51,14 +53,18 @@ const getAverageTimeOfCompletionForPerson = (personData) => {
 	}
 }
 
-export const getAverageTimesForMembers = data => {
+export const getDataForMembers = data => {
 	const times = []
 	for (const key in data.members) {
 		const member = data.members[key]
-		const timeData = getAverageTimeOfCompletionForPerson(member)
-		if (timeData) {
-			times.push(timeData)
+		const memberData = getDataForPerson(member)
+		if (memberData) {
+			times.push(memberData)
 		}
 	}
-	return times.sort((a,b) => a.totalMillis - b.totalMillis)
+	const scores = times.map(memberData => memberData.score).sort((a, b) => a - b)
+	times.forEach(memberData => {
+		memberData.position = scores.length - scores.indexOf(memberData.score)
+	})
+	return times.sort((a,b) => a.score - b.score)
 }

@@ -3,11 +3,11 @@ import styles from '../styles/Home.module.css'
 import { getLeaderboardData } from '../util/getLeaderboardData'
 import StarChart from '../components/StarChart'
 import PointsChart from '../components/PointsChart'
-import AveragesTable from '../components/AveragesTable'
+import StatsTable from '../components/StatsTable'
 import Placings from '../components/Placings'
 import PropTypes from 'prop-types'
 import { getCompletionTimesAsArray, getPointsAtTimes } from '../util/getCompletionTimes'
-import { getAverageTimesForMembers } from '../util/getAverageTimeForMembers'
+import { getDataForMembers } from '../util/getDataForMembers'
 import { DateTime } from 'luxon'
 import { dataSetOptions } from '../config/chartConfig'
 import { randomColour } from '../util/randomColour'
@@ -76,17 +76,16 @@ export default function Home({ data }) {
 			const person = boardData.members[key]
 			colours[person.name] = randomColour()
 		}
-		avgTimes = getAverageTimesForMembers(boardData)
-		const getTotalMillisForName = name => {
+		avgTimes = getDataForMembers(boardData)
+		const getScoreForName = name => {
 			const dataForName = avgTimes.filter(data =>  data.name === name)
 			if (dataForName.length > 0) {
-				return dataForName[0].totalMillis
+				return dataForName[0].score
 			}
 		}
-		pointsData = getPointChartDataSets(boardData, colours).sort((a,b) => getTotalMillisForName(a.label) - getTotalMillisForName(b.label))
-		starData = getStarChartDatasets(boardData, colours).sort((a,b) => getTotalMillisForName(a.label) - getTotalMillisForName(b.label))
+		pointsData = getPointChartDataSets(boardData, colours).sort((a,b) => getScoreForName(b.label) - getScoreForName(a.label))
+		starData = getStarChartDatasets(boardData, colours).sort((a,b) => getScoreForName(b.label) - getScoreForName(a.label))
 	}
-	
 	return (
 		<div className={styles.container}>
 			<Head>
@@ -105,7 +104,7 @@ export default function Home({ data }) {
 				})} onChange={setBoardId} value={boardId}/>}
 				{haveBoards && <PointsChart datasets={pointsData} />}
 				{haveBoards && <StarChart datasets={starData} />}
-				{haveBoards && <AveragesTable datasets={avgTimes}/>}
+				{haveBoards && <StatsTable datasets={avgTimes}/>}
 			</main>
 
 		</div>

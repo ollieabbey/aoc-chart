@@ -14,22 +14,18 @@ const getLeaderBoardIds = async () => {
 		},
 	})
 	const html = await response.text()
-	const idToName = {}
-	Array.from(new DOMParser()
+	return Array.from(new DOMParser()
 		.parseFromString(html, 'text/html')
 		.getElementsByTagName('article')
 		.item(0)
 		.getElementsByTagName('div'))
-		.forEach(element => {
+		.map(element => {
 			const urlParts = element.getElementsByTagName('a')
 				.item(0)
 				.getAttribute('href')
 				.split('/')
-			const id = urlParts[urlParts.length - 1]
-			// console.log(JSON.stringify(element))
-			idToName[id] = element.lastChild.data
+			return urlParts[urlParts.length - 1]
 		})
-	return idToName
 }
 
 const getLeaderBoardDataForId = async boardId => {
@@ -65,10 +61,11 @@ const getPersonalAveragePlacing = async () => {
 export const getLeaderboardData = async () => { 
 	const leaderboardIds = await getLeaderBoardIds()
 	const boards = {}
-	Object.keys(leaderboardIds).forEach(async id => {
+	leaderboardIds.forEach(async id => {
+		const data = await getLeaderBoardDataForId(id)
 		boards[id] = {
-			owner: leaderboardIds[id],
-			data: await getLeaderBoardDataForId(id)
+			owner: data.members[data.owner_id].name,
+			data: data
 		}
 	})
 	return {
