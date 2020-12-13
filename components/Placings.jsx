@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types'
-const DOMParser = require('xmldom').DOMParser
+import { DOMParser } from 'xmldom'
 import styles from '../styles/Home.module.css'
 
-const getPlacings = html =>  new DOMParser()
+const getPlacings = html => new DOMParser()
 	.parseFromString(html, 'text/html')
 	.getElementsByTagName('pre')
 	.item(0)

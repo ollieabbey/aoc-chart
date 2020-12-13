@@ -11,6 +11,9 @@ import { getAverageTimesForMembers } from '../util/getAverageTimeForMembers'
 import { DateTime } from 'luxon'
 import { dataSetOptions } from '../config/chartConfig'
 import { randomColour } from '../util/randomColour'
+import { useState } from 'react'
+import Dropdown from 'react-dropdown'
+import 'react-dropdown/style.css'
 
 const getStarChartDatasets = (data, colours) => {
 	const allCompletionTimes = getCompletionTimesAsArray(data)
@@ -61,22 +64,29 @@ const getPointChartDataSets = (data, colours) => {
 }
 
 export default function Home({ data }) {
-	const boardData = data.board
 	const personalData = data.personal
-	const colours = {}
-	for (const key in boardData.members) {
-		const person = boardData.members[key]
-		colours[person.name] = randomColour()
-	}
-	const avgTimes = getAverageTimesForMembers(boardData)
-	const getTotalMillisForName = name => {
-		const dataForName = avgTimes.filter(data =>  data.name === name)
-		if (dataForName.length > 0) {
-			return dataForName[0].totalMillis
+	const boardIds = Object.keys(data.boards)
+	const haveBoards = boardIds.length > 0
+	let avgTimes, pointsData, starData, boardId, setBoardId
+	if (haveBoards) {
+		[boardId, setBoardId] = useState({ value: boardIds[0], label: data.boards[boardIds[0]].owner})
+		const boardData = data.boards[boardId.value].data
+		const colours = {}
+		for (const key in boardData.members) {
+			const person = boardData.members[key]
+			colours[person.name] = randomColour()
 		}
+		avgTimes = getAverageTimesForMembers(boardData)
+		const getTotalMillisForName = name => {
+			const dataForName = avgTimes.filter(data =>  data.name === name)
+			if (dataForName.length > 0) {
+				return dataForName[0].totalMillis
+			}
+		}
+		pointsData = getPointChartDataSets(boardData, colours).sort((a,b) => getTotalMillisForName(a.label) - getTotalMillisForName(b.label))
+		starData = getStarChartDatasets(boardData, colours).sort((a,b) => getTotalMillisForName(a.label) - getTotalMillisForName(b.label))
 	}
-	const pointsData = getPointChartDataSets(boardData, colours).sort((a,b) => getTotalMillisForName(a.label) - getTotalMillisForName(b.label))
-	const starData = getStarChartDatasets(boardData, colours).sort((a,b) => getTotalMillisForName(a.label) - getTotalMillisForName(b.label))
+	
 	return (
 		<div className={styles.container}>
 			<Head>
@@ -89,9 +99,13 @@ export default function Home({ data }) {
 					Advent of Code Leaderboard Charts
 				</h1>
 				<Placings html={personalData}/>
-				<PointsChart datasets={pointsData} />
-				<StarChart datasets={starData} />
-				<AveragesTable datasets={avgTimes}/>
+				{haveBoards && <pre>Select leaderboard owner:</pre>}
+				{haveBoards && <Dropdown options={boardIds.map(id => {
+					return { value: id, label: data.boards[id].owner}
+				})} onChange={setBoardId} value={boardId}/>}
+				{haveBoards && <PointsChart datasets={pointsData} />}
+				{haveBoards && <StarChart datasets={starData} />}
+				{haveBoards && <AveragesTable datasets={avgTimes}/>}
 			</main>
 
 		</div>

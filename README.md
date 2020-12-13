@@ -4,7 +4,7 @@ Chart displaying Advent of Code stats.
 ## Prerequisites
 - `node`
 - `yarn`
-- An Advent of Code OAuth token able to access the leaderboard with ID `496748`.
+- An Advent of Code OAuth token.
 
 ## Setup
 
