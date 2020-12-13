@@ -32,7 +32,7 @@ const getStarChartDatasets = (data, colours) => {
 		}
 		datasets.push(dataset)
 	}
-	return datasets.sort((a,b) => a.person > b.person)
+	return datasets
 }
 
 const getPointChartDataSets = (data, colours) => {
@@ -56,7 +56,7 @@ const getPointChartDataSets = (data, colours) => {
 		}
 		datasets.push(dataset)
 	}
-	return datasets.sort((a,b) => a.person > b.person)
+	return datasets
 }
 
 export default function Home({ data }) {
@@ -65,6 +65,15 @@ export default function Home({ data }) {
 		const person = data.members[key]
 		colours[person.name] = randomColour()
 	}
+	const avgTimes = getAverageTimesForMembers(data)
+	const getTotalMillisForName = name => {
+		const dataForName = avgTimes.filter(data =>  data.name === name)
+		if (dataForName.length > 0) {
+			return dataForName[0].totalMillis
+		}
+	}
+	const pointsData = getPointChartDataSets(data, colours).sort((a,b) => getTotalMillisForName(a.label) - getTotalMillisForName(b.label))
+	const starData = getStarChartDatasets(data, colours).sort((a,b) => getTotalMillisForName(a.label) - getTotalMillisForName(b.label))
 	return (
 		<div className={styles.container}>
 			<Head>
@@ -76,9 +85,9 @@ export default function Home({ data }) {
 				<h1 className={styles.title}>
 					Advent of Code Leaderboard Charts
 				</h1>
-				<PointsChart datasets={getPointChartDataSets(data, colours)} />
-				<StarChart datasets={getStarChartDatasets(data, colours)} />
-				<AveragesTable datasets={getAverageTimesForMembers(data)}/>
+				<PointsChart datasets={pointsData} />
+				<StarChart datasets={starData} />
+				<AveragesTable datasets={avgTimes}/>
 			</main>
 
 		</div>
