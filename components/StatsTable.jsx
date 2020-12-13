@@ -19,13 +19,19 @@ const HeaderRow = ({ requestSort }) => {
                 Stars
 				</th>
 				<th onClick={() => requestSort('part1Millis')}>
-                Part 1
+                Part 1 Average
 				</th>
 				<th onClick={() => requestSort('part2Millis')}>
-                Part 2
+                Part 2 Average
 				</th>
 				<th onClick={() => requestSort('totalMillis')}>
-                Total
+                Overall Average
+				</th>
+				<th onClick={() => requestSort('fastestPart1Millis')}>
+                Fastest Part 1
+				</th>
+				<th onClick={() => requestSort('fastestPart2Millis')}>
+                Fastest Part 2
 				</th>
 			</tr>
 		</thead>
@@ -42,6 +48,8 @@ const DataRow = (data) => {
 			<td>{data['Part 1']}</td>
 			<td>{data['Part 2']}</td>
 			<td>{data.total}</td>
+			<td>{data['Fastest Part 1']}</td>
+			<td>{data['Fastest Part 2']}</td>
 		</tr>
 	)
 }
