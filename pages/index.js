@@ -4,6 +4,7 @@ import { getLeaderboardData } from '../util/getLeaderboardData'
 import StarChart from '../components/StarChart'
 import PointsChart from '../components/PointsChart'
 import AveragesTable from '../components/AveragesTable'
+import Placings from '../components/Placings'
 import PropTypes from 'prop-types'
 import { getCompletionTimesAsArray, getPointsAtTimes } from '../util/getCompletionTimes'
 import { getAverageTimesForMembers } from '../util/getAverageTimeForMembers'
@@ -60,20 +61,22 @@ const getPointChartDataSets = (data, colours) => {
 }
 
 export default function Home({ data }) {
+	const boardData = data.board
+	const personalData = data.personal
 	const colours = {}
-	for (const key in data.members) {
-		const person = data.members[key]
+	for (const key in boardData.members) {
+		const person = boardData.members[key]
 		colours[person.name] = randomColour()
 	}
-	const avgTimes = getAverageTimesForMembers(data)
+	const avgTimes = getAverageTimesForMembers(boardData)
 	const getTotalMillisForName = name => {
 		const dataForName = avgTimes.filter(data =>  data.name === name)
 		if (dataForName.length > 0) {
 			return dataForName[0].totalMillis
 		}
 	}
-	const pointsData = getPointChartDataSets(data, colours).sort((a,b) => getTotalMillisForName(a.label) - getTotalMillisForName(b.label))
-	const starData = getStarChartDatasets(data, colours).sort((a,b) => getTotalMillisForName(a.label) - getTotalMillisForName(b.label))
+	const pointsData = getPointChartDataSets(boardData, colours).sort((a,b) => getTotalMillisForName(a.label) - getTotalMillisForName(b.label))
+	const starData = getStarChartDatasets(boardData, colours).sort((a,b) => getTotalMillisForName(a.label) - getTotalMillisForName(b.label))
 	return (
 		<div className={styles.container}>
 			<Head>
@@ -85,6 +88,7 @@ export default function Home({ data }) {
 				<h1 className={styles.title}>
 					Advent of Code Leaderboard Charts
 				</h1>
+				<Placings html={personalData}/>
 				<PointsChart datasets={pointsData} />
 				<StarChart datasets={starData} />
 				<AveragesTable datasets={avgTimes}/>

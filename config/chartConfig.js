@@ -21,7 +21,7 @@ export const options = {
 	},
 	layout: {
 		padding: {
-			top: 100
+			top: 60
 		}
 	}
 }
