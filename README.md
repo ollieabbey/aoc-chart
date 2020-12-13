@@ -15,7 +15,7 @@ $ yarn
 
 Export your Advent of Code token as an environment variable
 ```shell
-$ export AOC_SESSION={Paste your token here}
+$ export AOC_SESSION=Paste your token here
 ```
 
 Start up with `yarn`
