@@ -1,5 +1,5 @@
 # aoc-chart
-Chart displaying Advent of Code stats.
+Chart displaying Advent of Code stats, written using Next.js.
 
 ## Prerequisites
 - `node`
