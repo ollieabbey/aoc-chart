@@ -44,7 +44,10 @@ const getAverageTimeOfCompletionForPerson = (personData) => {
 		name: personData.name,
 		'Part 1': formatDuration(avgDuration1),
 		'Part 2': formatDuration(avgDuration2),
-		total: avgDuration1 + avgDuration2
+		total: formatDuration(avgDuration1.plus(avgDuration2)),
+		part1Millis: avgDuration1,
+		part2Millis: avgDuration2,
+		totalMillis: avgDuration1 + avgDuration2
 	}
 }
 
@@ -57,5 +60,5 @@ export const getAverageTimesForMembers = data => {
 			times.push(timeData)
 		}
 	}
-	return times.sort((a,b) => a.total - b.total)
+	return times.sort((a,b) => a.totalMillis - b.totalMillis)
 }

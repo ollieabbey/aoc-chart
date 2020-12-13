@@ -3,8 +3,10 @@ import styles from '../styles/Home.module.css'
 import { getLeaderboardData } from '../util/getLeaderboardData'
 import StarChart from '../components/StarChart'
 import PointsChart from '../components/PointsChart'
+import AveragesTable from '../components/AveragesTable'
 import PropTypes from 'prop-types'
 import { getCompletionTimesAsArray, getPointsAtTimes } from '../util/getCompletionTimes'
+import { getAverageTimesForMembers } from '../util/getAverageTimeForMembers'
 import { DateTime } from 'luxon'
 import { dataSetOptions } from '../config/chartConfig'
 import { randomColour } from '../util/randomColour'
@@ -76,6 +78,7 @@ export default function Home({ data }) {
 				</h1>
 				<PointsChart datasets={getPointChartDataSets(data, colours)} />
 				<StarChart datasets={getStarChartDatasets(data, colours)} />
+				<AveragesTable datasets={getAverageTimesForMembers(data)}/>
 			</main>
 
 		</div>
