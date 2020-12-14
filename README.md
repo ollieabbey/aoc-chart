@@ -4,7 +4,7 @@ Page displaying Advent of Code stats and charts, written using Next.js.
 ## Prerequisites
 - `node`
 - `yarn`
-- An Advent of Code OAuth token.
+- An Advent of Code session token.
 
 ## Setup
 
